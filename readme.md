@@ -1,49 +1,83 @@
-# Crypto CLI Tool
+# Encryption Program
 
-This program allows you to encrypt, decrypt, and perform brute-force decryption on text files. You can run the program from the command line and specify various commands and arguments.
+## Description
 
-## Run the Program
+This project is a Java encryption program implementing a modified Caesar cipher. Key functionalities include encryption, decryption, and brute force (key guessing). The program also provides tools for frequency analysis and supports various languages.
 
-You can run the program using the command line. Depending on your needs, you can use different commands and arguments.
+## Contents
+
+- `CLI`: Command-line interface for interacting with the program.
+- `Cypher`: Class for encrypting and decrypting text.
+- `FrequencyAnalysis`: Class for frequency analysis of characters.
+- `FileManager`: Class for file operations.
+- `ArgumentsParser`: Class for parsing command-line arguments.
+- `RunOptions`: Class for storing execution parameters.
+- `Main`: Main class of the program that performs operations based on provided arguments.
+
+## Usage
 
 ### Commands
 
-- `-e` Encrypt
-- `-d` Decrypt
-- `-bf` Brute force
+- `-e` : Encrypt text
+- `-d` : Decrypt text
+- `-bf`: Brute force (key guessing)
 
-### Arguments
+### Command Examples
 
-- `-k` Key (used for encryption and decryption)
-- `-f` File path (path to the input file)
-- `-sf` Static file path (used for brute force to specify the file for static analysis)
+- Encrypt the file `input.txt` with key `5`:
 
-### Examples
+    ```bash
+    java -cp target/your-project.jar ua.com.javarush.gnew.Main -e -f path/to/input.txt -k 5
+    ```
 
-1. **Encrypt a file with a key**
+- Decrypt the file `input.txt` with key `5`:
 
-   ```sh
-   java -jar your-program.jar -e -k 1 -f "/path/to/file.txt"
-   java -jar your-program.jar -d -k 5 -f "/path/to/file [ENCRYPTED].txt"
-   java -jar your-program.jar -bf -f "/path/to/file [ENCRYPTED].txt"
+    ```bash
+    java -cp target/your-project.jar ua.com.javarush.gnew.Main -d -f path/to/input.txt -k 5
+    ```
 
-### Notes
-Arguments can be provided in any order.
-If using -e or -d, you must provide both -k and -f arguments.
-If using -bf, you must provide the -f argument, and -sf is optional.
+- Brute force with frequency analysis based on the file `static.txt`:
 
-### Example Commands
-**Encrypt a file with a key in any order:**
+    ```bash
+    java -cp target/your-project.jar ua.com.javarush.gnew.Main -bf -f path/to/input.txt -sf path/to/static.txt
+    ```
+
+## Testing
+
+To run tests, use Maven:
+
+```bash
+mvn test
 ```
-java -jar your-program.jar -e -f "/path/to/file.txt" -k 1
-Decrypt a file with a key:
+
+## Tests include verification of: ## 
 ```
-**Decrypt a file with a key:**
+CLI functionality
 ```
-java -jar your-program.jar -d -k 5 -f "/path/to/file [ENCRYPTED].txt"
-Perform brute-force decryption:
 ```
-**Perform brute-force decryption:**
+Argument parsing correctness
 ```
-java -jar your-program.jar -bf -f "/path/to/file [ENCRYPTED].txt"
 ```
+Encryption and decryption functionality
+```
+```
+Frequency analysis
+```
+```
+File operations
+```
+## Class Descriptions ##
+
+- CLI: Manages user input through the command line. Requests commands and file paths.
+
+- Cypher: Implements the encryption and decryption algorithm. Determines the alphabet and applies encryption.
+
+- FrequencyAnalysis: Analyzes the frequency of characters in text. Determines the decryption key based on frequency analysis.
+
+- FileManager: Handles reading from and writing to files.
+
+- ArgumentsParser: Parses command-line arguments and creates a RunOptions object.
+
+- RunOptions: Stores execution parameters.
+
+- Main: Executes the main logic of the program based on command-line arguments. Performs encryption, decryption, or brute force.
