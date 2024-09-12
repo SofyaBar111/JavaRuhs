@@ -40,7 +40,7 @@ public class CLI {
         );
     }
 
-    private Command parseCommand(String input) {
+    protected Command parseCommand(String input) { // Изменено с private на protected
         switch (input) {
             case "-E":
                 return Command.ENCRYPT;

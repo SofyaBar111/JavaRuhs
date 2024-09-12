@@ -54,8 +54,8 @@ public class ArgumentsParser {
             throw new IllegalArgumentException("Key is required for encrypt or decrypt mode");
         }
 
-        if (filePath == null) {
-            throw new IllegalArgumentException("File path is required");
+        if (filePath == null && (command == Command.ENCRYPT || command == Command.DECRYPT)) {
+            throw new IllegalArgumentException("File path is required for encrypt or decrypt mode");
         }
 
         return new RunOptions(command, key, filePath, filePathForStaticAnalysis);

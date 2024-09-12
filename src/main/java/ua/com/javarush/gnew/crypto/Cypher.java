@@ -23,4 +23,3 @@ public class Cypher {
         return decryptedContent.toString();
     }
 }
-

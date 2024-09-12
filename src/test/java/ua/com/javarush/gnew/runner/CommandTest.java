@@ -2,7 +2,7 @@ package ua.com.javarush.gnew.runner;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CommandTest {
 
@@ -13,4 +13,3 @@ public class CommandTest {
         assertEquals(Command.BRUTEFORCE, Command.valueOf("BRUTEFORCE"));
     }
 }
-
