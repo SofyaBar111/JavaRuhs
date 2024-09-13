@@ -7,7 +7,6 @@ public class ArgumentsParser {
         Command command = null;
         Integer key = null;
         Path filePath = null;
-        Path filePathForStaticAnalysis = null;
 
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -16,9 +15,11 @@ public class ArgumentsParser {
                 case "-e":
                     command = Command.ENCRYPT;
                     break;
+
                 case "-d":
                     command = Command.DECRYPT;
                     break;
+
                 case "-bf":
                     command = Command.BRUTEFORCE;
                     break;
@@ -29,6 +30,7 @@ public class ArgumentsParser {
                         throw new IllegalArgumentException("Missing value for key");
                     }
                     break;
+
                 case "-f":
                     if (i + 1 < args.length) {
                         filePath = Path.of(args[++i]);
@@ -36,11 +38,7 @@ public class ArgumentsParser {
                         throw new IllegalArgumentException("Missing value for file");
                     }
                     break;
-                case "-sf":
-                    if (i + 1 < args.length) {
-                        filePathForStaticAnalysis = Path.of(args[++i]);
-                    }
-                    break;
+
                 default:
                     throw new IllegalArgumentException("Unknown argument: " + arg);
             }
@@ -50,14 +48,15 @@ public class ArgumentsParser {
             throw new IllegalArgumentException("Command (-e, -d, or -bf) is required");
         }
 
-        if ((command == Command.ENCRYPT || command == Command.DECRYPT) && key == null) {
+        if ((command == Command.DECRYPT || command == Command.ENCRYPT) && key == null) {
             throw new IllegalArgumentException("Key is required for encrypt or decrypt mode");
         }
 
-        if (filePath == null && (command == Command.ENCRYPT || command == Command.DECRYPT)) {
-            throw new IllegalArgumentException("File path is required for encrypt or decrypt mode");
+        if (filePath == null) {
+            throw new IllegalArgumentException("File path is required");
         }
 
-        return new RunOptions(command, key, filePath, filePathForStaticAnalysis);
+        return new RunOptions(command, key, filePath);
     }
 }
+

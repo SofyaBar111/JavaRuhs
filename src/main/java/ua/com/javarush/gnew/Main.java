@@ -1,55 +1,71 @@
 package ua.com.javarush.gnew;
 
+import ua.com.javarush.gnew.crypto.CaesarCypher;
 import ua.com.javarush.gnew.crypto.Cypher;
-import ua.com.javarush.gnew.crypto.FrequencyAnalysis;
-import ua.com.javarush.gnew.file.FileManager;
 import ua.com.javarush.gnew.runner.Command;
 import ua.com.javarush.gnew.runner.RunOptions;
+import ua.com.javarush.gnew.runner.ArgumentsParser;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.io.IOException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 public class Main {
-
-    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
-
     public static void main(String[] args) {
-        RunOptions runOptions = new RunOptions(Command.BRUTEFORCE, null, Paths.get("input.txt"), Paths.get("output.txt"));
-        FileManager fileManager = new FileManager();
-        Cypher cypher = new Cypher();
-        FrequencyAnalysis frequencyAnalysis = new FrequencyAnalysis();
+        if (args.length == 0) {
+            System.out.println("Please provide arguments.");
+            return;
+        }
+
+        ArgumentsParser argumentsParser = new ArgumentsParser();
+        RunOptions runOptions = null;
 
         try {
-            performFrequencyAnalysis(fileManager, cypher, frequencyAnalysis, runOptions);
+            runOptions = argumentsParser.parse(args);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Error parsing arguments: " + e.getMessage());
+            return;
+        }
+
+        Cypher<Integer> cypher = new CaesarCypher();
+
+        try {
+            Path inputPath = runOptions.getFilePath();
+            Path outputPath = Path.of("output.txt"); // Предполагается, что output.txt в текущем каталоге
+
+            if (Files.notExists(inputPath)) {
+                System.err.println("Input file does not exist.");
+                return;
+            }
+
+            String inputText = Files.readString(inputPath);
+
+            switch (runOptions.getCommand()) {
+                case ENCRYPT:
+                    String encryptedText = cypher.encrypt(inputText, runOptions.getKey());
+                    Files.writeString(outputPath, encryptedText, StandardOpenOption.CREATE);
+                    System.out.println("Encryption complete.");
+                    break;
+
+                case DECRYPT:
+                    String decryptedText = cypher.decrypt(inputText, runOptions.getKey());
+                    Files.writeString(outputPath, decryptedText, StandardOpenOption.CREATE);
+                    System.out.println("Decryption complete.");
+                    break;
+
+                case BRUTEFORCE:
+                    String bruteForcedText = cypher.bruteForce(inputText);
+                    Files.writeString(outputPath, bruteForcedText, StandardOpenOption.CREATE);
+                    System.out.println("Brute-force attempt complete.");
+                    break;
+
+                default:
+                    System.out.println("Unknown command.");
+                    break;
+            }
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "An error occurred during frequency analysis", e);
-        }
-    }
-
-    public static void performFrequencyAnalysis(FileManager fileManager, Cypher cypher, FrequencyAnalysis frequencyAnalysis, RunOptions runOptions) throws IOException {
-        if (runOptions.getFilePathForStaticAnalysis() != null) {
-            String staticContent = fileManager.read(runOptions.getFilePathForStaticAnalysis());
-            List<Character> alphabet = cypher.determineAlphabet(staticContent);
-
-            int key = frequencyAnalysis.performFrequencyAnalysis(staticContent, alphabet);
-            String decryptedContent = cypher.decrypt(staticContent, key);
-
-            Path newFilePath = Paths.get(createNewFileName(runOptions.getFilePath(), "DECRYPTED_KEY_" + key));
-            fileManager.write(newFilePath, decryptedContent);
-        }
-    }
-
-    protected static String createNewFileName(Path filePath, String suffix) { // Изменено с private на protected
-        String fileName = filePath.getFileName().toString();
-        int dotIndex = fileName.lastIndexOf('.');
-        if (dotIndex > 0) {
-            return fileName.substring(0, dotIndex) + " [" + suffix + "].txt";
-        } else {
-            return fileName + " [" + suffix + "].txt";
+            System.err.println("Error processing file: " + e.getMessage());
         }
     }
 }
